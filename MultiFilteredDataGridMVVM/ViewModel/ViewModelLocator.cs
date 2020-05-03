@@ -1,64 +1,51 @@
-/*
-  In App.xaml:
-  <Application.Resources>
-      <vm:ViewModelLocator xmlns:vm="clr-namespace:MultiFilteredDataGridMVVM"
-                           x:Key="Locator" />
-  </Application.Resources>
-  
-  In the View:
-  DataContext="{Binding Source={StaticResource Locator}, Path=ViewModelName}"
-
-  You can also use Blend to do all this with the tool's support.
-  See http://www.galasoft.ch/mvvm
-*/
-
 using Common;
-using CommonServiceLocator;
 using DataService;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
+using Unity;
 using MultiFilteredDataGridMVVM.Model;
+using Unity.Lifetime;
 
 namespace MultiFilteredDataGridMVVM.ViewModel
 {
-    /// <summary>
-    /// This class contains static references to all the view models in the
-    /// application and provides an entry point for the bindings.
-    /// </summary>
-    public class ViewModelLocator
+    public class MainViewModelLocator
     {
-        /// <summary>
-        /// Initializes a new instance of the ViewModelLocator class.
-        /// </summary>
-        public ViewModelLocator()
+        static MainViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            Container = new UnityContainer();
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
-                // Create design time view services and models
-                SimpleIoc.Default.Register<IDataService, DesignDummyService>();
+                // if in design mode, use design data service
+                Container.RegisterType<IDataService, DesignDummyService>();
             }
             else
             {
-                // Create run time view services and models
-                SimpleIoc.Default.Register<IDataService, DummyService>();
+                // otherwise for runtime use real data source
+                Container.RegisterType<IDataService, DummyService>();
             }
 
-            SimpleIoc.Default.Register<MainViewModel>();
+            // register as a singleton
+            Container.RegisterType<MainViewModel>(new ContainerControlledLifetimeManager());
+        }
+
+        public static IUnityContainer Container
+        {
+            get;
+            private set;
         }
 
         public MainViewModel MainVM
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                var vm = Container.Resolve<MainViewModel>();
+                return vm;
             }
         }
-        
+
         public static void Cleanup()
         {
-            ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
+            Container.Resolve<MainViewModel>().Cleanup();
         }
     }
 }
