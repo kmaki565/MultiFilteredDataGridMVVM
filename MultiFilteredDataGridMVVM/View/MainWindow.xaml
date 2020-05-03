@@ -1,0 +1,54 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:MultiFilteredDataGridMVVM_ViewModel="clr-namespace:MultiFilteredDataGridMVVM.ViewModel" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:Custom="http://schemas.microsoft.com/wpf/2008/toolkit" 
+        mc:Ignorable="d" x:Class="MultiFilteredDataGridMVVM.View.MainView"
+        Title="Main View" Height="426" Width="626" Background="#FFB0C5D0" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <MultiFilteredDataGridMVVM_ViewModel:ViewModelLocator x:Key="MainViewModelLocatorDataSource" d:IsDataSource="True"/>
+        <!-- This next line instantiates a CollectionViewSource with the collection of Things as its collection of objects-->
+        <CollectionViewSource Source="{Binding Things}" x:Key="X_CVS"/>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <Binding Mode="OneWay" Path="MainVM" Source="{StaticResource MainViewModelLocatorDataSource}"/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="57"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <ComboBox HorizontalAlignment="Left" Margin="8,0,0,6.04" Width="75" VerticalAlignment="Bottom" 
+            ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button HorizontalAlignment="Left" Margin="87,27.48,0,4.52" Width="16" Height="16" 
+            Command="{Binding RemoveYearFilterCommand, Mode=OneWay}">
+            <Image Width="10" Height="10" Style="{DynamicResource ImageStyleForButtons}"/>
+        </Button>
+        <ComboBox Margin="129,0,0,6.04" HorizontalAlignment="Left" Width="145" d:LayoutOverrides="HorizontalAlignment" VerticalAlignment="Bottom" 
+            ItemsSource="{Binding Authors}" SelectedItem="{Binding SelectedAuthor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Margin="278,27.48,0,4.52" HorizontalAlignment="Left" Width="16" d:LayoutOverrides="HorizontalAlignment" Height="16" 
+            Command="{Binding RemoveAuthorFilterCommand, Mode=OneWay}">
+            <Image Width="10" Height="10" Style="{DynamicResource ImageStyleForButtons}"/>
+        </Button>
+        <ComboBox HorizontalAlignment="Left" Margin="321,0,0,6.04" Width="120" VerticalAlignment="Bottom" 
+            ItemsSource="{Binding Countries}" SelectedItem="{Binding SelectedCountry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button HorizontalAlignment="Left" Margin="445,27.48,0,4.52" Width="16" Height="16" 
+            Command="{Binding RemoveCountryFilterCommand, Mode=OneWay}">
+            <Image Width="10" Height="10" Style="{DynamicResource ImageStyleForButtons}"/>
+        </Button>
+        <Button x:Name="v" Content="Reset" HorizontalAlignment="Left" Margin="488,0,0,6.04" Width="75" VerticalAlignment="Bottom" 
+            Command="{Binding ResetFiltersCommand, Mode=OneWay}"/>
+        <TextBlock HorizontalAlignment="Left" Margin="8,11.04,0,28.226" TextWrapping="Wrap" Text="Year" FontSize="13.333" d:LayoutOverrides="Height"/>
+        <TextBlock HorizontalAlignment="Left" Margin="129,11.04,0,28.226" TextWrapping="Wrap" Text="Author" FontSize="13.333" d:LayoutOverrides="Height"/>
+        <TextBlock HorizontalAlignment="Left" Margin="321,11.04,0,0" TextWrapping="Wrap" Text="Country" FontSize="13.333" VerticalAlignment="Top"/>
+
+        <!-- *** The ItemsSource of the data grid is bound to the CollectionViewSource object that was instantiated above -->
+        <Custom:DataGrid ItemsSource="{Binding Source={StaticResource X_CVS}}" Margin="8" Grid.Row="1" AutoGenerateColumns="True"  IsReadOnly="True"></Custom:DataGrid>
+
+    </Grid>
+</Window>
