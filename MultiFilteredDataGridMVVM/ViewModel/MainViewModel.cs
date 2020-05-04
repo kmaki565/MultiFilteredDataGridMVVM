@@ -40,7 +40,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Common;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.CommandWpf;
 using GalaSoft.MvvmLight.Messaging;
 using MultiFilteredDataGridMVVM.Helpers;
 
