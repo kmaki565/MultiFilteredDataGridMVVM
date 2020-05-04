@@ -7,16 +7,16 @@
         xmlns:Custom="http://schemas.microsoft.com/wpf/2008/toolkit" 
         mc:Ignorable="d" x:Class="MultiFilteredDataGridMVVM.View.MainView"
         Title="Main View" Height="426" Width="626" Background="#FFB0C5D0" ResizeMode="CanResizeWithGrip">
-	<Window.Resources>
-		<MultiFilteredDataGridMVVM_ViewModel:MainViewModelLocator x:Key="MainViewModelLocatorDataSource" d:IsDataSource="True"/>
+    <Window.Resources>
+        <MultiFilteredDataGridMVVM_ViewModel:ViewModelLocator x:Key="MainViewModelLocatorDataSource" d:IsDataSource="True"/>
         <!-- This next line instantiates a CollectionViewSource with the collection of Things as its collection of objects-->
         <CollectionViewSource Source="{Binding Things}" x:Key="X_CVS"/>
     </Window.Resources>
-    
-	<Window.DataContext>
-		<Binding Mode="OneWay" Path="MainVM" Source="{StaticResource MainViewModelLocatorDataSource}"/>
-	</Window.DataContext>
-    
+
+    <Window.DataContext>
+        <Binding Mode="OneWay" Path="MainVM" Source="{StaticResource MainViewModelLocatorDataSource}"/>
+    </Window.DataContext>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="57"/>
