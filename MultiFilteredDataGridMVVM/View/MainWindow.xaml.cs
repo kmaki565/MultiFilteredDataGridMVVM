@@ -19,19 +19,6 @@ namespace MultiFilteredDataGridMVVM.View
     {
         public MainView()
         {
-            //if (DesignerProperties.GetIsInDesignMode(this))
-            //    Ioc.Default.ConfigureServices(
-            //        new ServiceCollection()
-            //        .AddSingleton<IDataService, DesignDummyService>()
-            //        .AddTransient<MainViewModel>()
-            //        .BuildServiceProvider());
-            //else 
-            //    Ioc.Default.ConfigureServices(
-            //        new ServiceCollection()
-            //        .AddSingleton<IDataService, DummyService>()
-            //        .AddTransient<MainViewModel>()
-            //        .BuildServiceProvider());
-
             InitializeComponent();
             DataContext = Ioc.Default.GetService<MainViewModel>();
 

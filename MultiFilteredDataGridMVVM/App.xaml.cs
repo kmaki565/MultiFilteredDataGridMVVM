@@ -22,6 +22,7 @@ namespace MultiFilteredDataGridMVVM
     {
         public App()
         {
+            //TODO: Show data from DesignDummyService in the XAML Designer.
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
                 .AddSingleton<IDataService, DummyService>()
