@@ -213,6 +213,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             {
                 _canCanRemoveCountryFilter = value;
                 OnPropertyChanged();
+                RemoveCountryFilterCommand.NotifyCanExecuteChanged();
             }
         }
         /// <summary>
@@ -225,6 +226,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             {
                 _canCanRemoveAuthorFilter = value;
                 OnPropertyChanged();
+                RemoveAuthorFilterCommand.NotifyCanExecuteChanged();
             }
         }
         /// <summary>
@@ -237,6 +239,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             {
                 _canCanRemoveYearFilter = value;
                 OnPropertyChanged();
+                RemoveYearFilterCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -244,22 +247,22 @@ namespace MultiFilteredDataGridMVVM.ViewModel
 
         #region Commands
 
-        public ICommand ResetFiltersCommand
+        public RelayCommand ResetFiltersCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveCountryFilterCommand
+        public RelayCommand RemoveCountryFilterCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveAuthorFilterCommand
+        public RelayCommand RemoveAuthorFilterCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveYearFilterCommand
+        public RelayCommand RemoveYearFilterCommand
         {
             get;
             private set;

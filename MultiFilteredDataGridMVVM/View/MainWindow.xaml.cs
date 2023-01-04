@@ -1,5 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+﻿using Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using DataService;
+using Microsoft.Extensions.DependencyInjection;
 using MultiFilteredDataGridMVVM.Helpers;
+using MultiFilteredDataGridMVVM.Model;
+using MultiFilteredDataGridMVVM.ViewModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 
@@ -12,7 +19,21 @@ namespace MultiFilteredDataGridMVVM.View
     {
         public MainView()
         {
+            //if (DesignerProperties.GetIsInDesignMode(this))
+            //    Ioc.Default.ConfigureServices(
+            //        new ServiceCollection()
+            //        .AddSingleton<IDataService, DesignDummyService>()
+            //        .AddTransient<MainViewModel>()
+            //        .BuildServiceProvider());
+            //else 
+            //    Ioc.Default.ConfigureServices(
+            //        new ServiceCollection()
+            //        .AddSingleton<IDataService, DummyService>()
+            //        .AddTransient<MainViewModel>()
+            //        .BuildServiceProvider());
+
             InitializeComponent();
+            DataContext = Ioc.Default.GetService<MainViewModel>();
 
             // Here we send a message which is caught by the view model.  The message contains a reference
             // to the CollectionViewSource which is instantiated when the view is instantiated (before the view model).
