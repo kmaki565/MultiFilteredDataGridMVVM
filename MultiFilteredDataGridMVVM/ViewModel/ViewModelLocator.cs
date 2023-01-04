@@ -13,11 +13,9 @@
 */
 
 using Common;
-using CommonServiceLocator;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using DataService;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
-using MultiFilteredDataGridMVVM.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MultiFilteredDataGridMVVM.ViewModel
 {
@@ -32,33 +30,37 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         /// </summary>
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            //ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                // Create design time view services and models
-                SimpleIoc.Default.Register<IDataService, DesignDummyService>();
-            }
-            else
-            {
-                // Create run time view services and models
-                SimpleIoc.Default.Register<IDataService, DummyService>();
-            }
+            //if (DesignerProperties.GetIsInDesignMode(MainVM))
+            //{
+            //    // Create design time view services and models
+            //    SimpleIoc.Default.Register<IDataService, DesignDummyService>();
+            //}
+            //else
+            //{
+            //    // Create run time view services and models
+            //    SimpleIoc.Default.Register<IDataService, DummyService>();
+            //}
 
-            SimpleIoc.Default.Register<MainViewModel>();
+            Ioc.Default.ConfigureServices(
+                new ServiceCollection()
+                .AddSingleton<IDataService, DummyService>()
+                .AddTransient<MainViewModel>()
+                .BuildServiceProvider());
         }
 
         public MainViewModel MainVM
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return Ioc.Default.GetRequiredService<MainViewModel>();
             }
         }
         
         public static void Cleanup()
         {
-            ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
+            //ServiceLocator.Current.GetInstance<MainViewModel>().Cleanup();
         }
     }
 }
