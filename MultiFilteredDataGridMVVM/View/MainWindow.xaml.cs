@@ -15,7 +15,7 @@ namespace MultiFilteredDataGridMVVM.View
         public MainView()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<MainViewModel>();
+            DataContext = Ioc.Default.GetRequiredService<MainViewModel>();
 
             // Here we send a message which is caught by the view model.  The message contains a reference
             // to the CollectionViewSource which is instantiated when the view is instantiated (before the view model).

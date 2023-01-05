@@ -39,12 +39,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             // is used to recieve a reference from the view that the collectionViewSource has been instantiated
             // and to recieve a reference to the CollectionViewSource which will be used in the view model for 
             // filtering
-            WeakReferenceMessenger.Default.Register<MainViewModel, ViewCollectionViewSourceMessageToken>(this, (r, m) => r.Handle_ViewCollectionViewSourceMessageToken(m));
-        }
-        protected override void OnDeactivated()
-        {
-            WeakReferenceMessenger.Default.Unregister<ViewCollectionViewSourceMessageToken>(this);
-            base.OnDeactivated();
+            Messenger.Register<MainViewModel, ViewCollectionViewSourceMessageToken>(this, (r, m) => r.Handle_ViewCollectionViewSourceMessageToken(m));
         }
 
         /// <summary>
