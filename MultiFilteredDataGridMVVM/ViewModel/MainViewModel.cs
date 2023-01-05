@@ -1,38 +1,4 @@
 //using GalaSoft.MvvmLight;
-
-//namespace MultiFilteredDataGridMVVM.ViewModel
-//{
-//    /// <summary>
-//    /// This class contains properties that the main View can data bind to.
-//    /// <para>
-//    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-//    /// </para>
-//    /// <para>
-//    /// You can also use Blend to data bind with the tool's support.
-//    /// </para>
-//    /// <para>
-//    /// See http://www.galasoft.ch/mvvm
-//    /// </para>
-//    /// </summary>
-//    public class MainViewModel : ViewModelBase
-//    {
-//        /// <summary>
-//        /// Initializes a new instance of the MainViewModel class.
-//        /// </summary>
-//        public MainViewModel()
-//        {
-//            ////if (IsInDesignMode)
-//            ////{
-//            ////    // Code runs in Blend --> create design time data.
-//            ////}
-//            ////else
-//            ////{
-//            ////    // Code runs "for real"
-//            ////}
-//        }
-//    }
-//}
-
 using Common;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -42,7 +8,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace MultiFilteredDataGridMVVM.ViewModel
 {
@@ -85,7 +50,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         /// <summary>
         /// Gets or sets the IDownloadDataService member
         /// </summary>
-        internal IDataService DataService { get; set; }
+        internal IDataService DataService { get; }
         /// <summary>
         /// Gets or sets the CollectionViewSource which is the proxy for the 
         /// collection of Things and the datagrid in which each thing is displayed.
@@ -213,6 +178,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             {
                 _canCanRemoveCountryFilter = value;
                 OnPropertyChanged();
+                // Apparently we need this to convey the change to the button UI with the new MVVM lib.
                 RemoveCountryFilterCommand.NotifyCanExecuteChanged();
             }
         }

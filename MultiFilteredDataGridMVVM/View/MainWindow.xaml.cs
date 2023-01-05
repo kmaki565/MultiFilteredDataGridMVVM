@@ -1,12 +1,7 @@
-﻿using Common;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using DataService;
-using Microsoft.Extensions.DependencyInjection;
 using MultiFilteredDataGridMVVM.Helpers;
-using MultiFilteredDataGridMVVM.Model;
 using MultiFilteredDataGridMVVM.ViewModel;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Data;
 
