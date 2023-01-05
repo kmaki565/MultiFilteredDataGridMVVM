@@ -17,13 +17,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    - uses: warrenbuckley/Setup-Nuget@v1
+    - uses: actions/checkout@v3
+    - uses: nuget/setup-nuget@v1
     - run: nuget restore ${{ env.PROJECT_NAME }}.sln
-    - uses: warrenbuckley/Setup-MSBuild@v1
+    - uses: microsoft/setup-msbuild@v1.0.2
     - run: msbuild ${{ env.PROJECT_NAME }}.sln '/p:Configuration=Release;Platform="Any CPU"'
     # Save artifacts
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v3
       with:
         name: ${{ env.PROJECT_NAME }}-${{ github.sha }}
         path: ${{ env.PROJECT_NAME }}\bin\Release
