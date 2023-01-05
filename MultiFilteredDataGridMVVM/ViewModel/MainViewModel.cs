@@ -1,52 +1,17 @@
 //using GalaSoft.MvvmLight;
-
-//namespace MultiFilteredDataGridMVVM.ViewModel
-//{
-//    /// <summary>
-//    /// This class contains properties that the main View can data bind to.
-//    /// <para>
-//    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-//    /// </para>
-//    /// <para>
-//    /// You can also use Blend to data bind with the tool's support.
-//    /// </para>
-//    /// <para>
-//    /// See http://www.galasoft.ch/mvvm
-//    /// </para>
-//    /// </summary>
-//    public class MainViewModel : ViewModelBase
-//    {
-//        /// <summary>
-//        /// Initializes a new instance of the MainViewModel class.
-//        /// </summary>
-//        public MainViewModel()
-//        {
-//            ////if (IsInDesignMode)
-//            ////{
-//            ////    // Code runs in Blend --> create design time data.
-//            ////}
-//            ////else
-//            ////{
-//            ////    // Code runs "for real"
-//            ////}
-//        }
-//    }
-//}
-
+using Common;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using MultiFilteredDataGridMVVM.Helpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
-using System.Windows.Input;
-using Common;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Messaging;
-using MultiFilteredDataGridMVVM.Helpers;
 
 namespace MultiFilteredDataGridMVVM.ViewModel
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : ObservableRecipient
     {
         #region Members
 
@@ -74,18 +39,13 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             // is used to recieve a reference from the view that the collectionViewSource has been instantiated
             // and to recieve a reference to the CollectionViewSource which will be used in the view model for 
             // filtering
-            Messenger.Default.Register<ViewCollectionViewSourceMessageToken>(this, Handle_ViewCollectionViewSourceMessageToken);
-        }
-        public override void Cleanup()
-        {
-            Messenger.Default.Unregister<ViewCollectionViewSourceMessageToken>(this);
-            base.Cleanup();
+            Messenger.Register<MainViewModel, ViewCollectionViewSourceMessageToken>(this, (r, m) => r.Handle_ViewCollectionViewSourceMessageToken(m));
         }
 
         /// <summary>
         /// Gets or sets the IDownloadDataService member
         /// </summary>
-        internal IDataService DataService { get; set; }
+        internal IDataService DataService { get; }
         /// <summary>
         /// Gets or sets the CollectionViewSource which is the proxy for the 
         /// collection of Things and the datagrid in which each thing is displayed.
@@ -105,7 +65,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_things == value)
                     return;
                 _things = value;
-                RaisePropertyChanged("Things");
+                OnPropertyChanged();
             }
         }
 
@@ -122,7 +82,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_selectedAuthor == value)
                     return;
                 _selectedAuthor = value;
-                RaisePropertyChanged("SelectedAuthor");
+                OnPropertyChanged();
                 ApplyFilter(!string.IsNullOrEmpty(_selectedAuthor) ? FilterField.Author : FilterField.None);
             }
         }
@@ -137,7 +97,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_selectedCountry == value)
                     return;
                 _selectedCountry = value;
-                RaisePropertyChanged("SelectedCountry");
+                OnPropertyChanged();
                 ApplyFilter(!string.IsNullOrEmpty(_selectedCountry) ? FilterField.Country : FilterField.None);
             }
         }
@@ -152,7 +112,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_selectedYear == value)
                     return;
                 _selectedYear = value;
-                RaisePropertyChanged("SelectedYear");
+                OnPropertyChanged();
                 ApplyFilter(_selectedYear.HasValue ? FilterField.Year : FilterField.None);
             }
         }
@@ -169,7 +129,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_authors == value)
                     return;
                 _authors = value;
-                RaisePropertyChanged("Authors");
+                OnPropertyChanged();
             }
         }
         /// <summary>
@@ -184,7 +144,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_countries == value)
                     return;
                 _countries = value;
-                RaisePropertyChanged("Countries");
+                OnPropertyChanged();
             }
         }
         /// <summary>
@@ -199,7 +159,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                 if (_years == value)
                     return;
                 _years = value;
-                RaisePropertyChanged("Years");
+                OnPropertyChanged();
             }
         }
 
@@ -212,7 +172,9 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             set
             {
                 _canCanRemoveCountryFilter = value;
-                RaisePropertyChanged("CanRemoveCountryFilter");
+                OnPropertyChanged();
+                // Apparently we need this to convey the change to the button UI with the new MVVM lib.
+                RemoveCountryFilterCommand.NotifyCanExecuteChanged();
             }
         }
         /// <summary>
@@ -224,7 +186,8 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             set
             {
                 _canCanRemoveAuthorFilter = value;
-                RaisePropertyChanged("CanRemoveAuthorFilter");
+                OnPropertyChanged();
+                RemoveAuthorFilterCommand.NotifyCanExecuteChanged();
             }
         }
         /// <summary>
@@ -236,7 +199,8 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             set
             {
                 _canCanRemoveYearFilter = value;
-                RaisePropertyChanged("CanRemoveYearFilter");
+                OnPropertyChanged();
+                RemoveYearFilterCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -244,22 +208,22 @@ namespace MultiFilteredDataGridMVVM.ViewModel
 
         #region Commands
 
-        public ICommand ResetFiltersCommand
+        public RelayCommand ResetFiltersCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveCountryFilterCommand
+        public RelayCommand RemoveCountryFilterCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveAuthorFilterCommand
+        public RelayCommand RemoveAuthorFilterCommand
         {
             get;
             private set;
         }
-        public ICommand RemoveYearFilterCommand
+        public RelayCommand RemoveYearFilterCommand
         {
             get;
             private set;
@@ -269,7 +233,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
 
         private void InitializeCommands()
         {
-            ResetFiltersCommand = new RelayCommand(ResetFilters, null);
+            ResetFiltersCommand = new RelayCommand(ResetFilters);
             RemoveCountryFilterCommand = new RelayCommand(RemoveCountryFilter, () => CanRemoveCountryFilter);
             RemoveAuthorFilterCommand = new RelayCommand(RemoveAuthorFilter, () => CanRemoveAuthorFilter);
             RemoveYearFilterCommand = new RelayCommand(RemoveYearFilter, () => CanRemoveYearFilter);

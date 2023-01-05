@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using DataService;
+using Microsoft.Extensions.DependencyInjection;
+using MultiFilteredDataGridMVVM.ViewModel;
 using System.Windows;
 
 namespace MultiFilteredDataGridMVVM
@@ -13,5 +12,14 @@ namespace MultiFilteredDataGridMVVM
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            //TODO: Show data from DesignDummyService in the XAML Designer.
+            Ioc.Default.ConfigureServices(
+                new ServiceCollection()
+                .AddSingleton<IDataService, DummyService>()
+                .AddTransient<MainViewModel>()
+                .BuildServiceProvider());
+        }
     }
 }
