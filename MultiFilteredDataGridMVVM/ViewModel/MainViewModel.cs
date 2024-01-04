@@ -83,7 +83,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                     return;
                 _selectedAuthor = value;
                 OnPropertyChanged();
-                ApplyFilter(!string.IsNullOrEmpty(_selectedAuthor) ? FilterField.Author : FilterField.None);
+                ApplyAuthorFilter();
             }
         }
         /// <summary>
@@ -98,7 +98,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                     return;
                 _selectedCountry = value;
                 OnPropertyChanged();
-                ApplyFilter(!string.IsNullOrEmpty(_selectedCountry) ? FilterField.Country : FilterField.None);
+                ApplyCountryFilter();
             }
         }
         /// <summary>
@@ -113,7 +113,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
                     return;
                 _selectedYear = value;
                 OnPropertyChanged();
-                ApplyFilter(_selectedYear.HasValue ? FilterField.Year : FilterField.None);
+                ApplyYearFilter();
             }
         }
 
@@ -279,20 +279,14 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         public void RemoveCountryFilter()
         {
             SelectedCountry = null;
-            CanRemoveCountryFilter = false;
-            CVS.View.Refresh();
         }
         public void RemoveAuthorFilter()
         {
             SelectedAuthor = null;
-            CanRemoveAuthorFilter = false;
-            CVS.View.Refresh();
         }
         public void RemoveYearFilter()
         {
             SelectedYear = null;
-            CanRemoveYearFilter = false;
-            CVS.View.Refresh();
         }
 
         // Other helper methods ==============
@@ -311,19 +305,19 @@ namespace MultiFilteredDataGridMVVM.ViewModel
          *   allows it to be changed to another filter value. This applies to the other filters as well
          */
 
-        public void AddCountryFilter()
+        public void ApplyCountryFilter()
         {
-            CanRemoveCountryFilter = true;
+            CanRemoveCountryFilter = !string.IsNullOrEmpty(_selectedCountry);
             CVS.View.Refresh();
         }
-        public void AddAuthorFilter()
+        public void ApplyAuthorFilter()
         {
-            CanRemoveAuthorFilter = true;
+            CanRemoveAuthorFilter = !string.IsNullOrEmpty(_selectedAuthor);
             CVS.View.Refresh();
         }
-        public void AddYearFilter()
+        public void ApplyYearFilter()
         {
-            CanRemoveYearFilter = true;
+            CanRemoveYearFilter = _selectedYear.HasValue;
             CVS.View.Refresh();
         }
 
@@ -337,53 +331,34 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         private void FilterByAuthor(object sender, FilterEventArgs e)
         {
             // see Notes on Filter Methods:
-            var src = e.Item as Thing;
-            if (src == null)
-                e.Accepted = false;
-            else if (SelectedAuthor != null && string.Compare(SelectedAuthor, src.Author) != 0)
-                e.Accepted = false;
+            if (!string.IsNullOrEmpty(_selectedAuthor))
+            {
+                if (e.Item is not Thing src)
+                    e.Accepted = false;
+                else if (_selectedAuthor != src.Author)
+                    e.Accepted = false;
+            }
         }
         private void FilterByYear(object sender, FilterEventArgs e)
         {
             // see Notes on Filter Methods:
-            var src = e.Item as Thing;
-            if (src == null)
-                e.Accepted = false;
-            else if (SelectedYear.HasValue && SelectedYear != src.Year)
-                e.Accepted = false;
+            if (_selectedYear.HasValue)
+            {
+                if (e.Item is not Thing src)
+                    e.Accepted = false;
+                else if (_selectedYear != src.Year)
+                    e.Accepted = false;
+            }
         }
         private void FilterByCountry(object sender, FilterEventArgs e)
         {
             // see Notes on Filter Methods:
-            var src = e.Item as Thing;
-            if (src == null)
-                e.Accepted = false;
-            else if (SelectedCountry != null && string.Compare(SelectedCountry, src.Country) != 0)
-                e.Accepted = false;
-        }
-
-        private enum FilterField
-        {
-            Author,
-            Country,
-            Year,
-            None
-        }
-        private void ApplyFilter(FilterField field)
-        {
-            switch (field)
+            if (!string.IsNullOrEmpty(_selectedCountry))
             {
-                case FilterField.Author:
-                    AddAuthorFilter();
-                    break;
-                case FilterField.Country:
-                    AddCountryFilter();
-                    break;
-                case FilterField.Year:
-                    AddYearFilter();
-                    break;
-                default:
-                    break;
+                if (e.Item is not Thing src)
+                    e.Accepted = false;
+                else if (_selectedCountry != src.Country)
+                    e.Accepted = false;
             }
         }
     }
