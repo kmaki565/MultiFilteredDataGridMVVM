@@ -15,9 +15,9 @@ namespace MultiFilteredDataGridMVVM.ViewModel
     {
         #region Members
 
-        private string _selectedAuthor;
-        private string _selectedCountry;
-        private Nullable<int> _selectedYear;
+        private string _selectedAuthor = null;
+        private string _selectedCountry = null;
+        private Nullable<int> _selectedYear = null;
         private ObservableCollection<string> _authors;
         private ObservableCollection<string> _countries;
         private ObservableCollection<int> _years;
@@ -262,6 +262,9 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         private void Handle_ViewCollectionViewSourceMessageToken(ViewCollectionViewSourceMessageToken token)
         {
             CVS = token.CVS;
+            CVS.Filter += new FilterEventHandler(FilterByCountry);
+            CVS.Filter += new FilterEventHandler(FilterByAuthor);
+            CVS.Filter += new FilterEventHandler(FilterByYear);
         }
 
         // Command methods (called by the commands) ===============
@@ -275,21 +278,21 @@ namespace MultiFilteredDataGridMVVM.ViewModel
         }
         public void RemoveCountryFilter()
         {
-            CVS.Filter -= new FilterEventHandler(FilterByCountry);
             SelectedCountry = null;
             CanRemoveCountryFilter = false;
+            CVS.View.Refresh();
         }
         public void RemoveAuthorFilter()
         {
-            CVS.Filter -= new FilterEventHandler(FilterByAuthor);
             SelectedAuthor = null;
             CanRemoveAuthorFilter = false;
+            CVS.View.Refresh();
         }
         public void RemoveYearFilter()
         {
-            CVS.Filter -= new FilterEventHandler(FilterByYear);
             SelectedYear = null;
             CanRemoveYearFilter = false;
+            CVS.View.Refresh();
         }
 
         // Other helper methods ==============
@@ -310,45 +313,18 @@ namespace MultiFilteredDataGridMVVM.ViewModel
 
         public void AddCountryFilter()
         {
-            // see Notes on Adding Filters:
-            if (CanRemoveCountryFilter)
-            {
-                CVS.Filter -= new FilterEventHandler(FilterByCountry);
-                CVS.Filter += new FilterEventHandler(FilterByCountry);
-            }
-            else
-            {
-                CVS.Filter += new FilterEventHandler(FilterByCountry);
-                CanRemoveCountryFilter = true;
-            }
+            CanRemoveCountryFilter = true;
+            CVS.View.Refresh();
         }
         public void AddAuthorFilter()
         {
-            // see Notes on Adding Filters:
-            if (CanRemoveAuthorFilter)
-            {
-                CVS.Filter -= new FilterEventHandler(FilterByAuthor);
-                CVS.Filter += new FilterEventHandler(FilterByAuthor);
-            }
-            else
-            {
-                CVS.Filter += new FilterEventHandler(FilterByAuthor);
-                CanRemoveAuthorFilter = true;
-            }
+            CanRemoveAuthorFilter = true;
+            CVS.View.Refresh();
         }
         public void AddYearFilter()
         {
-            // see Notes on Adding Filters:
-            if (CanRemoveYearFilter)
-            {
-                CVS.Filter -= new FilterEventHandler(FilterByYear);
-                CVS.Filter += new FilterEventHandler(FilterByYear);
-            }
-            else
-            {
-                CVS.Filter += new FilterEventHandler(FilterByYear);
-                CanRemoveYearFilter = true;
-            }
+            CanRemoveYearFilter = true;
+            CVS.View.Refresh();
         }
 
         /* Notes on Filter Methods:
@@ -364,7 +340,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             var src = e.Item as Thing;
             if (src == null)
                 e.Accepted = false;
-            else if (string.Compare(SelectedAuthor, src.Author) != 0)
+            else if (SelectedAuthor != null && string.Compare(SelectedAuthor, src.Author) != 0)
                 e.Accepted = false;
         }
         private void FilterByYear(object sender, FilterEventArgs e)
@@ -373,7 +349,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             var src = e.Item as Thing;
             if (src == null)
                 e.Accepted = false;
-            else if (SelectedYear != src.Year)
+            else if (SelectedYear.HasValue && SelectedYear != src.Year)
                 e.Accepted = false;
         }
         private void FilterByCountry(object sender, FilterEventArgs e)
@@ -382,7 +358,7 @@ namespace MultiFilteredDataGridMVVM.ViewModel
             var src = e.Item as Thing;
             if (src == null)
                 e.Accepted = false;
-            else if (string.Compare(SelectedCountry, src.Country) != 0)
+            else if (SelectedCountry != null && string.Compare(SelectedCountry, src.Country) != 0)
                 e.Accepted = false;
         }
 
